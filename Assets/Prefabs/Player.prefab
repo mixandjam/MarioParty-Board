@@ -252,6 +252,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roll: 0
+  OnRollStart:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRollUpdate:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1425886073069860681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -266,6 +272,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   splineContainer: {fileID: 0}
   moveSpeed: 10
+  movementLerp: 15
+  rotationLerp: 10
   currentKnot:
     Spline: 0
     Knot: 0
