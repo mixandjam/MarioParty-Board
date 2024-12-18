@@ -12,7 +12,9 @@ public class SplineKnotAnimate : MonoBehaviour
 
     [Header("Movement Parameters")]
     [SerializeField] private float moveSpeed = 10;
-    private int remainingKnotMovement;
+    [SerializeField] private float movementLerp = 10;
+    [SerializeField] private float rotationLerp = 10;
+    private int remainingSteps;
 
     [Header("Knot Logic")]
     public SplineKnotIndex currentKnot;
@@ -58,7 +60,7 @@ public class SplineKnotAnimate : MonoBehaviour
         MoveAndRotate();
     }
 
-    public void Animate(int amountOfKnotsToMove = 1)
+    public void Animate(int stepAmount = 1)
     {
         if (isMoving)
         {
@@ -66,7 +68,7 @@ public class SplineKnotAnimate : MonoBehaviour
             return;
         }
 
-        remainingKnotMovement = amountOfKnotsToMove;
+        remainingSteps = stepAmount;
         StartCoroutine(MoveAlongSpline());
     }
 
@@ -121,7 +123,7 @@ public class SplineKnotAnimate : MonoBehaviour
             else
             {
                 //Movement only count on non-junction knots
-                remainingKnotMovement--;
+                remainingSteps--;
             }
 
             OnKnotEnter.Invoke(currentKnot);
@@ -138,7 +140,7 @@ public class SplineKnotAnimate : MonoBehaviour
                 }
             }
 
-            if (remainingKnotMovement > 0)
+            if (remainingSteps > 0)
             {
                 StartCoroutine(MoveAlongSpline());
             }
@@ -154,20 +156,17 @@ public class SplineKnotAnimate : MonoBehaviour
 
     void MoveAndRotate()
     {
-        //Set position
-        float blend = Mathf.Pow(0.5f, Time.deltaTime * 20);
-        Vector3 targetPosition = (Vector3)splineContainer.EvaluatePosition(currentKnot.Spline, currentT);
-        transform.position = Vector3.Lerp(targetPosition, transform.position, blend);
+        float movementBlend = Mathf.Pow(0.5f, Time.deltaTime * movementLerp);
 
-        // Look towards path
+        Vector3 targetPosition = (Vector3)splineContainer.EvaluatePosition(currentKnot.Spline, currentT);
+        transform.position = Vector3.Lerp(targetPosition, transform.position, movementBlend);
+
         splineContainer.Splines[currentKnot.Spline].Evaluate(currentT, out float3 position, out float3 direction, out float3 up);
 
-        // Transform direction to world space
         Vector3 worldDirection = splineContainer.transform.TransformDirection(direction);
 
-        // Check if the direction vector is approximately zero
-        if (worldDirection.sqrMagnitude > 0.0001f) // Avoids the "Look rotation viewing vector is zero" error
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(worldDirection, Vector3.up), blend);
+        if (worldDirection.sqrMagnitude > 0.0001f)
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(worldDirection, Vector3.up), rotationLerp * Time.deltaTime);
     }
 
     public void AddToJunctionIndex(int amount)

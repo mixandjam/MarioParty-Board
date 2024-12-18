@@ -1,14 +1,34 @@
 using UnityEngine;
+using UnityEngine.Splines;
 
 [RequireComponent(typeof(SplineKnotAnimate))]
 public class PlayerController : MonoBehaviour
 {
     private SplineKnotAnimate splineKnotAnimator;
+    private SplineKnotInstantiate splineKnotData;
     [SerializeField] private int roll = 0;
 
     void Start()
     {
         splineKnotAnimator = GetComponent<SplineKnotAnimate>();
+
+        splineKnotAnimator.OnKnotEnter.AddListener(OnKnotEnter);
+        splineKnotAnimator.OnKnotLand.AddListener(OnKnotLand);
+
+        if (FindAnyObjectByType<SplineKnotInstantiate>() != null)
+            splineKnotData = FindAnyObjectByType<SplineKnotInstantiate>();
+    }
+
+    private void OnKnotLand(SplineKnotIndex index)
+    {
+        SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
+        Debug.Log($"Landed: S{data.knotIndex.Spline}K{data.knotIndex.Knot}");
+    }
+
+    private void OnKnotEnter(SplineKnotIndex index)
+    {
+        SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
+        Debug.Log($"Entered: S{data.knotIndex.Spline}K{data.knotIndex.Knot}");
     }
 
     void Update()
