@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Splines;
 
 [RequireComponent(typeof(SplineKnotAnimate))]
@@ -7,6 +8,11 @@ public class PlayerController : MonoBehaviour
     private SplineKnotAnimate splineKnotAnimator;
     private SplineKnotInstantiate splineKnotData;
     [SerializeField] private int roll = 0;
+    private int currentRoll;
+
+    [Header("Events")]
+    [HideInInspector] public UnityEvent<bool> OnRollStart;
+    [HideInInspector] public UnityEvent<int> OnRollUpdate;
 
     void Start()
     {
@@ -23,12 +29,18 @@ public class PlayerController : MonoBehaviour
     {
         SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
         Debug.Log($"Landed: S{data.knotIndex.Spline}K{data.knotIndex.Knot}");
+
+        OnRollStart.Invoke(false);
     }
 
     private void OnKnotEnter(SplineKnotIndex index)
     {
         SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
         Debug.Log($"Entered: S{data.knotIndex.Spline}K{data.knotIndex.Knot}");
+
+        currentRoll = splineKnotAnimator.Step;
+
+        OnRollUpdate.Invoke(currentRoll);
     }
 
     void Update()
@@ -42,6 +54,9 @@ public class PlayerController : MonoBehaviour
             else if (!splineKnotAnimator.isMoving)
             {
                 roll = Random.Range(1, 10);
+                currentRoll = roll;
+                OnRollStart.Invoke(true);
+                OnRollUpdate.Invoke(roll);
                 splineKnotAnimator.Animate(roll);
             }
         }

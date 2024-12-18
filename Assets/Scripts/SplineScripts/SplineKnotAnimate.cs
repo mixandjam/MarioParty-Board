@@ -15,6 +15,7 @@ public class SplineKnotAnimate : MonoBehaviour
     [SerializeField] private float movementLerp = 10;
     [SerializeField] private float rotationLerp = 10;
     private int remainingSteps;
+    public int Step => remainingSteps;
 
     [Header("Knot Logic")]
     public SplineKnotIndex currentKnot;
