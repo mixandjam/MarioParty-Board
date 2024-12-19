@@ -20,9 +20,9 @@ public class RollUI : MonoBehaviour
         player.OnRollUpdate.AddListener(OnRollUpdate);
     }
 
-    private void LateUpdate()
+    private void Update()
     {
-        float movementBlend = Mathf.Pow(0.5f, Time.deltaTime * 20);
+        float movementBlend = Mathf.Pow(0.5f, Time.deltaTime * 10);
         Vector3 screenPosition = Camera.main.WorldToScreenPoint(player.transform.position + textOffset);
         rollTextMesh.transform.position = Vector3.Lerp(rollTextMesh.transform.position, screenPosition, movementBlend);
     }
