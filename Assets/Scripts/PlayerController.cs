@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
             }
             else if (!splineKnotAnimator.isMoving)
             {
-                roll = Random.Range(1, 10);
+                roll = Random.Range(1, 11);
                 OnRollStart.Invoke(true);
                 OnRollUpdate.Invoke(roll);
                 splineKnotAnimator.Animate(roll);
