@@ -1765,6 +1765,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7358961903864977352, guid: 5c11467321dac483a8e7a8f1ecf64346, type: 3}
   m_PrefabInstance: {fileID: 978201935}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &810296067 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6129162804387766447, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
+  m_PrefabInstance: {fileID: 4203322401365844316}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -3934,13 +3939,33 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1012069625859819012, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
-      propertyPath: isSpinning
-      value: 1
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1425886073069860681, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
       propertyPath: splineContainer
       value: 
       objectReference: {fileID: 1433502786}
+    - target: {fileID: 4847045409563889704, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
+      propertyPath: playerDice
+      value: 
+      objectReference: {fileID: 810296067}
+    - target: {fileID: 4847045409563889704, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
+      propertyPath: jumpDuration
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4847045409563889704, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
+      propertyPath: rotationSpeed
+      value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 4847045409563889704, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
+      propertyPath: tiltAmplitude
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 4847045409563889704, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
+      propertyPath: tiltFrequency
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 8651838001116464818, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
       propertyPath: m_Name
       value: Player

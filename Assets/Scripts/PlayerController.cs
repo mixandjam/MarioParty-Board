@@ -8,7 +8,6 @@ public class PlayerController : MonoBehaviour
 {
     private SplineKnotAnimate splineKnotAnimator;
     private SplineKnotInstantiate splineKnotData;
-    private DiceRollAnimation diceRollAnimation;
     [SerializeField] private int roll = 0;
 
     [Header("Parameters")]
@@ -26,7 +25,6 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         splineKnotAnimator = GetComponent<SplineKnotAnimate>();
-        diceRollAnimation = GetComponentInChildren<DiceRollAnimation>();
 
         splineKnotAnimator.OnKnotEnter.AddListener(OnKnotEnter);
         splineKnotAnimator.OnKnotLand.AddListener(OnKnotLand);

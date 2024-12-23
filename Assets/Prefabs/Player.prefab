@@ -33,6 +33,7 @@ Transform:
   - {fileID: 487031332612431044}
   - {fileID: 2159516476037739122}
   - {fileID: 6293122571095047700}
+  - {fileID: 6129162804387766447}
   m_Father: {fileID: 367194610044946675}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4847045409563889704
@@ -47,6 +48,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e6d0ea1bf4f94f55a52f5afb1e9b412, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerModel: {fileID: 6293122571095047700}
+  jumpPower: 1
+  jumpDuration: 0.5
 --- !u!1 &7679982433999583140
 GameObject:
   m_ObjectHideFlags: 0
@@ -251,7 +255,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9170204005957163322}
-  - {fileID: 6129162804387766447}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3808863326156861310
@@ -267,15 +270,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roll: 0
+  fadeRollDelay: 0.5
   OnRollStart:
     m_PersistentCalls:
       m_Calls: []
-  OnRollUpdate:
+  OnRollEnd:
     m_PersistentCalls:
       m_Calls: []
-  isIdle: 0
+  OnMovementStart:
+    m_PersistentCalls:
+      m_Calls: []
+  OnMovementUpdate:
+    m_PersistentCalls:
+      m_Calls: []
   isRolling: 0
-  isMoving: 0
 --- !u!114 &1425886073069860681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,7 +329,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 367194610044946675}
+    m_TransformParent: {fileID: 9170204005957163322}
     m_Modifications:
     - target: {fileID: 1517510758702019447, guid: 994d85afefc524534afaeebbc796cd87, type: 3}
       propertyPath: m_LocalPosition.x
@@ -362,6 +370,10 @@ PrefabInstance:
     - target: {fileID: 1517510758702019447, guid: 994d85afefc524534afaeebbc796cd87, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5623862407152784860, guid: 994d85afefc524534afaeebbc796cd87, type: 3}
+      propertyPath: isSpinning
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5754625222157326443, guid: 994d85afefc524534afaeebbc796cd87, type: 3}
       propertyPath: m_Name
@@ -443,7 +455,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d8e8b20b6f3bc41249843d1c3552e8bd, type: 3}
       propertyPath: m_Name
-      value: mixbot_low_v2-4
+      value: JammoModel
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

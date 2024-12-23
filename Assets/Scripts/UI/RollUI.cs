@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -35,5 +36,10 @@ public class RollUI : MonoBehaviour
     private void OnRollStart(bool active)
     {
         rollTextMesh.gameObject.SetActive(active);
+        if (active)
+        {
+            rollTextMesh.transform.DOComplete();
+            rollTextMesh.transform.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+        }
     }
 }
