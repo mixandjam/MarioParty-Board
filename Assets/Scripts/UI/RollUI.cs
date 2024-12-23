@@ -16,8 +16,8 @@ public class RollUI : MonoBehaviour
         rollTextMesh = GetComponentInChildren<TextMeshProUGUI>();
         rollTextMesh.gameObject.SetActive(false);
 
-        player.OnRollStart.AddListener(OnRollStart);
-        player.OnRollUpdate.AddListener(OnRollUpdate);
+        player.OnMovementStart.AddListener(OnRollStart);
+        player.OnMovementUpdate.AddListener(OnRollUpdate);
     }
 
     private void Update()

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Splines;
@@ -7,15 +8,25 @@ public class PlayerController : MonoBehaviour
 {
     private SplineKnotAnimate splineKnotAnimator;
     private SplineKnotInstantiate splineKnotData;
+    private DiceRollAnimation diceRollAnimation;
     [SerializeField] private int roll = 0;
 
+    [Header("Parameters")]
+    [SerializeField] private float fadeRollDelay = .5f;
+
     [Header("Events")]
-    [HideInInspector] public UnityEvent<bool> OnRollStart;
-    [HideInInspector] public UnityEvent<int> OnRollUpdate;
+    [HideInInspector] public UnityEvent OnRollStart;
+    [HideInInspector] public UnityEvent<int, float> OnRollEnd;
+    [HideInInspector] public UnityEvent<bool> OnMovementStart;
+    [HideInInspector] public UnityEvent<int> OnMovementUpdate;
+
+    [Header("States")]
+    public bool isRolling;
 
     void Start()
     {
         splineKnotAnimator = GetComponent<SplineKnotAnimate>();
+        diceRollAnimation = GetComponentInChildren<DiceRollAnimation>();
 
         splineKnotAnimator.OnKnotEnter.AddListener(OnKnotEnter);
         splineKnotAnimator.OnKnotLand.AddListener(OnKnotLand);
@@ -27,33 +38,38 @@ public class PlayerController : MonoBehaviour
     private void OnKnotLand(SplineKnotIndex index)
     {
         SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
-        Debug.Log($"Landed: S{data.knotIndex.Spline}K{data.knotIndex.Knot}");
+        //Debug.Log($"Landed: S{data.knotIndex.Spline}K{data.knotIndex.Knot}");
 
-        OnRollStart.Invoke(false);
+        OnMovementStart.Invoke(false);
     }
 
     private void OnKnotEnter(SplineKnotIndex index)
     {
         SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
-        Debug.Log($"Entered: S{data.knotIndex.Spline}K{data.knotIndex.Knot}");
+        //Debug.Log($"Entered: S{data.knotIndex.Spline}K{data.knotIndex.Knot}");
 
-        OnRollUpdate.Invoke(splineKnotAnimator.Step);
+        OnMovementUpdate.Invoke(splineKnotAnimator.Step);
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            if (splineKnotAnimator.isMoving)
+                return;
+
             if (splineKnotAnimator.inJunction)
             {
                 splineKnotAnimator.inJunction = false;
             }
-            else if (!splineKnotAnimator.isMoving)
+            else
             {
-                roll = Random.Range(1, 11);
-                OnRollStart.Invoke(true);
-                OnRollUpdate.Invoke(roll);
-                splineKnotAnimator.Animate(roll);
+                if (isRolling)
+                {
+                    StartCoroutine(RollSequence());
+                }
+                else
+                    PrepareToRoll();
             }
         }
 
@@ -66,5 +82,31 @@ public class PlayerController : MonoBehaviour
         {
             splineKnotAnimator.AddToJunctionIndex(-1);
         }
+
+    }
+
+    private void PrepareToRoll()
+    {
+        //Set rolling state
+        isRolling = true;
+
+        //Set unique camera
+
+        //Rotate towards camera
+
+        //Show spinning block;
+        OnRollStart.Invoke();
+    }
+
+    IEnumerator RollSequence()
+    {
+        roll = Random.Range(1, 11);
+        OnRollEnd.Invoke(roll, fadeRollDelay); ;
+        OnMovementStart.Invoke(true);
+        OnMovementUpdate.Invoke(roll);
+        yield return new WaitForSeconds(fadeRollDelay);
+        yield return new WaitForSeconds(.2f);
+        isRolling = false;
+        splineKnotAnimator.Animate(roll);
     }
 }

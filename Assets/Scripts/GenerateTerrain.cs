@@ -1,7 +1,9 @@
+using System;
 using UnityEngine;
 using UnityEngine.Splines;
 
 [RequireComponent(typeof(Terrain))]
+[ExecuteAlways]
 public class GenerateTerrain : MonoBehaviour
 {
     private Terrain terrain;
@@ -35,6 +37,21 @@ public class GenerateTerrain : MonoBehaviour
     {
         terrain = GetComponent<Terrain>();
         terrainData = terrain.terrainData;
+    }
+
+    private void OnEnable()
+    {
+        Spline.Changed += OnSplineChanged;
+    }
+
+
+    private void OnDisable()
+    {
+        Spline.Changed -= OnSplineChanged;
+    }
+    private void OnSplineChanged(Spline spline, int arg2, SplineModification modification)
+    {
+        ModifyTerrain();
     }
 
     private void OnValidate()

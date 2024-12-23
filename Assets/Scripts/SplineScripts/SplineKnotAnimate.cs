@@ -166,7 +166,7 @@ public class SplineKnotAnimate : MonoBehaviour
 
         Vector3 worldDirection = splineContainer.transform.TransformDirection(direction);
 
-        if (worldDirection.sqrMagnitude > 0.0001f)
+        if (worldDirection.sqrMagnitude > 0.0001f && isMoving)
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(worldDirection, Vector3.up), rotationLerp * Time.deltaTime);
     }
 

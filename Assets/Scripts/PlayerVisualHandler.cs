@@ -14,17 +14,19 @@ public class PlayerVisualHandler : MonoBehaviour
         playerController = GetComponentInParent<PlayerController>();
         splineKnotAnimator = GetComponentInParent<SplineKnotAnimate>();
 
-        playerController.OnRollStart.AddListener(OnRollStart);
+        playerController.OnMovementStart.AddListener(OnMovementStart);
+        playerController.OnRollEnd.AddListener(OnRollEnd);
         splineKnotAnimator.OnEnterJunction.AddListener(OnEnterJunction);
         splineKnotAnimator.OnKnotLand.AddListener(OnKnotLand);
     }
 
-    private void OnRollStart(bool arg0)
+    private void OnRollEnd(int arg0, float arg1)
     {
-        if (arg0)
-        {
-            animator.SetTrigger("Reset");
-        }
+        animator.SetTrigger("RollJump");
+    }
+
+    private void OnMovementStart(bool arg0)
+    {
     }
 
     private void OnKnotLand(SplineKnotIndex arg0)
@@ -45,11 +47,6 @@ public class PlayerVisualHandler : MonoBehaviour
         float fadeSpeed = splineKnotAnimator.isMoving ? .1f : .05f;
 
         animator.SetFloat("Blend", speed, fadeSpeed, Time.deltaTime);
-
-        if (Input.GetKeyDown(KeyCode.J))
-        {
-            animator.SetTrigger("RollJump");
-        }
 
     }
 }
