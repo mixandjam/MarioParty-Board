@@ -11,11 +11,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int roll = 0;
 
     [Header("Parameters")]
-    [SerializeField] private float fadeRollDelay = .5f;
+    [SerializeField] private float jumpDelay = .5f;
+    [SerializeField]
+    private float resultDelay = .5f;
+    [SerializeField] private float startMoveDelay = .5f;
 
     [Header("Events")]
     [HideInInspector] public UnityEvent OnRollStart;
-    [HideInInspector] public UnityEvent<int, float> OnRollEnd;
+    [HideInInspector] public UnityEvent OnRollJump;
+    [HideInInspector] public UnityEvent<int> OnRollDisplay;
+    [HideInInspector] public UnityEvent OnRollEnd;
     [HideInInspector] public UnityEvent<bool> OnMovementStart;
     [HideInInspector] public UnityEvent<int> OnMovementUpdate;
 
@@ -85,26 +90,31 @@ public class PlayerController : MonoBehaviour
 
     private void PrepareToRoll()
     {
-        //Set rolling state
         isRolling = true;
 
-        //Set unique camera
-
-        //Rotate towards camera
-
-        //Show spinning block;
         OnRollStart.Invoke();
     }
 
     IEnumerator RollSequence()
     {
+        OnRollJump.Invoke();
+
         roll = Random.Range(1, 11);
-        OnRollEnd.Invoke(roll, fadeRollDelay); ;
+
+        yield return new WaitForSeconds(jumpDelay);
+
+        OnRollDisplay.Invoke(roll);
+
+        yield return new WaitForSeconds(resultDelay);
+
+        isRolling = false;
+        OnRollEnd.Invoke();
+
+        yield return new WaitForSeconds(startMoveDelay);
+
+        splineKnotAnimator.Animate(roll);
+
         OnMovementStart.Invoke(true);
         OnMovementUpdate.Invoke(roll);
-        yield return new WaitForSeconds(fadeRollDelay);
-        yield return new WaitForSeconds(.2f);
-        isRolling = false;
-        splineKnotAnimator.Animate(roll);
     }
 }

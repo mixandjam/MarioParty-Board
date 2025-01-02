@@ -4,6 +4,7 @@ using DG.Tweening;
 using UnityEngine.Splines;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerVisualHandler : MonoBehaviour
 {
@@ -14,6 +15,13 @@ public class PlayerVisualHandler : MonoBehaviour
     [Header("References")]
     [SerializeField] private Transform playerModel;
     [SerializeField] private Transform playerDice;
+    [SerializeField] private Transform junctionVisual;
+    [SerializeField] private Transform junctionArrowPrefab;
+    private List<GameObject> junctionList;
+
+    [Header("JumpParameters")]
+    [SerializeField] private Color selectedJunctionColor;
+    [SerializeField] private Color defaultJunctionColor;
 
 
     [Header("Jump Parameters")]
@@ -40,14 +48,19 @@ public class PlayerVisualHandler : MonoBehaviour
         playerDice.gameObject.SetActive(false);
 
         playerController.OnRollStart.AddListener(OnRollStart);
+        playerController.OnRollJump.AddListener(OnRollJump);
+        playerController.OnRollDisplay.AddListener(OnRollDisplay);
         playerController.OnRollEnd.AddListener(OnRollEnd);
         playerController.OnMovementStart.AddListener(OnMovementStart);
         splineKnotAnimator.OnEnterJunction.AddListener(OnEnterJunction);
+        splineKnotAnimator.OnJunctionSelection.AddListener(OnJunctionSelection);
         splineKnotAnimator.OnKnotLand.AddListener(OnKnotLand);
     }
 
     private void OnRollStart()
     {
+        transform.DOLookAt(Camera.main.transform.position, .35f, AxisConstraint.Y);
+
         diceSpinning = true;
 
         StartCoroutine(RandomDiceNumberCoroutine());
@@ -56,30 +69,36 @@ public class PlayerVisualHandler : MonoBehaviour
         playerDice.DOScale(0, .3f).From();
     }
 
-    private void OnRollEnd(int rollValue, float delay)
+    private void OnRollJump()
     {
-
         playerModel.DOComplete();
         playerModel.DOJump(transform.position, jumpPower, 1, jumpDuration);
         animator.SetTrigger("RollJump");
+    }
 
-        StartCoroutine(DelayCoroutine());
+    private void OnRollDisplay(int roll)
+    {
+        playerDice.DOComplete();
+        diceSpinning = false;
+        SetDiceNumber(roll);
+        playerDice.transform.eulerAngles = Vector3.zero;
+        Vector3 diceLocalPos = playerDice.localPosition;
+        playerDice.DOLocalJump(diceLocalPos, .8f, 1, .25f);
+    }
 
-        IEnumerator DelayCoroutine()
-        {
 
-            yield return new WaitForSeconds(.05f);
-            diceSpinning = false;
-            SetDiceNumber(rollValue);
-            playerDice.transform.eulerAngles = Vector3.zero;
-
-            yield return new WaitForSeconds(delay);
-            playerDice.gameObject.SetActive(false);
-        }
+    private void OnRollEnd()
+    {
+        playerDice.gameObject.SetActive(false);
     }
 
     private void OnMovementStart(bool arg0)
     {
+        if (arg0)
+            transform.DOLocalRotate(Vector3.zero, .6f);
+        else
+            transform.DOLookAt(Camera.main.transform.position, .35f, AxisConstraint.Y);
+
     }
 
     private void OnKnotLand(SplineKnotIndex arg0)
@@ -91,7 +110,54 @@ public class PlayerVisualHandler : MonoBehaviour
     private void OnEnterJunction(bool junction)
     {
         animator.SetBool("InJunction", junction);
+
+        if (!junction)
+        {
+            foreach (GameObject go in junctionList)
+            {
+                go.transform.DOComplete();
+                go.transform.GetChild(0).DOComplete();
+                Destroy(go);
+            }
+            return;
+        }
+        else
+        {
+
+        }
+
+        junctionList = new List<GameObject>();
+        junctionVisual.DOComplete();
+        junctionVisual.DOScale(0, .2f).From().SetEase(Ease.OutBack);
+        for (int i = 0; i < splineKnotAnimator.walkableKnots.Count; i++)
+        {
+            GameObject junctionObject = Instantiate(junctionArrowPrefab.gameObject, junctionVisual);
+            junctionList.Add(junctionObject);
+            junctionObject.transform.LookAt(splineKnotAnimator.GetJunctionPathPosition(i), transform.up);
+        }
+
     }
+
+
+    private void OnJunctionSelection(int junctionIndex)
+    {
+        for (int i = 0; i < junctionList.Count; i++)
+        {
+            if (i != junctionIndex)
+            {
+                junctionList[i].GetComponentInChildren<Renderer>().material.color = defaultJunctionColor;
+                junctionList[i].transform.GetChild(0).DOComplete();
+                junctionList[i].transform.GetChild(0).DOScale(.2f, .2f);
+            }
+        }
+
+        junctionList[junctionIndex].GetComponentInChildren<Renderer>().material.color = selectedJunctionColor;
+        junctionList[junctionIndex].transform.DOComplete();
+        junctionList[junctionIndex].transform.DOPunchScale(Vector3.one / 4, .3f, 10, 1);
+        junctionList[junctionIndex].transform.GetChild(0).DOComplete();
+        junctionList[junctionIndex].transform.GetChild(0).DOScale(.8f, .3f).SetEase(Ease.OutBack);
+    }
+
 
     void Update()
     {

@@ -34,6 +34,7 @@ Transform:
   - {fileID: 2159516476037739122}
   - {fileID: 6293122571095047700}
   - {fileID: 6129162804387766447}
+  - {fileID: 239163329169907763}
   m_Father: {fileID: 367194610044946675}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4847045409563889704
@@ -49,8 +50,46 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerModel: {fileID: 6293122571095047700}
+  playerDice: {fileID: 6129162804387766447}
+  junctionVisual: {fileID: 239163329169907763}
+  junctionArrowPrefab: {fileID: 6335322888204620757, guid: 695996481d5984013b6d5e1a12243d83, type: 3}
   jumpPower: 1
-  jumpDuration: 0.5
+  jumpDuration: 0.4
+  rotationSpeed: 500
+  tiltAmplitude: 60
+  tiltFrequency: 5
+  numberAnimationSpeed: 0.1
+--- !u!1 &1933779531910355018
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 239163329169907763}
+  m_Layer: 0
+  m_Name: JunctionVisuals
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &239163329169907763
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1933779531910355018}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 9170204005957163322}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7679982433999583140
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,8 +309,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   roll: 0
-  fadeRollDelay: 0.5
+  jumpDelay: 0.08
+  resultDelay: 0.5
+  startMoveDelay: 0.5
   OnRollStart:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRollJump:
+    m_PersistentCalls:
+      m_Calls: []
+  OnRollDisplay:
     m_PersistentCalls:
       m_Calls: []
   OnRollEnd:
@@ -331,13 +378,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 9170204005957163322}
     m_Modifications:
+    - target: {fileID: 515278574197516154, guid: 994d85afefc524534afaeebbc796cd87, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1517510758702019447, guid: 994d85afefc524534afaeebbc796cd87, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1517510758702019447, guid: 994d85afefc524534afaeebbc796cd87, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.8
+      value: 3.7
       objectReference: {fileID: 0}
     - target: {fileID: 1517510758702019447, guid: 994d85afefc524534afaeebbc796cd87, type: 3}
       propertyPath: m_LocalPosition.z

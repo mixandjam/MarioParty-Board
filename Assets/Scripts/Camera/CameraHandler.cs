@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
@@ -7,8 +8,10 @@ public class CameraHandler : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private PlayerController playerController;
+    [SerializeField] private SplineKnotAnimate splineKnotAnimator;
     [SerializeField] private CinemachineCamera defaultCamera;
     [SerializeField] private CinemachineCamera zoomCamera;
+    [SerializeField] private CinemachineCamera junctionCamera;
     [SerializeField] private Volume depthOfFieldVolume;
 
     [Header("States")]
@@ -16,9 +19,16 @@ public class CameraHandler : MonoBehaviour
 
     private void Start()
     {
-        playerController.OnRollStart.AddListener(call: OnRollStart);
-        playerController.OnRollEnd.AddListener(OnRollEnd);
+        splineKnotAnimator = playerController.GetComponent<SplineKnotAnimate>();
+
+        playerController.OnRollStart.AddListener(OnRollStart);
         playerController.OnMovementStart.AddListener(OnMovementStart);
+        splineKnotAnimator.OnEnterJunction.AddListener(OnEnterJunction);
+    }
+
+    private void OnEnterJunction(bool junction)
+    {
+        junctionCamera.Priority = junction ? 10 : -1;
     }
 
     private void OnMovementStart(bool started)
@@ -33,18 +43,12 @@ public class CameraHandler : MonoBehaviour
                 ZoomCamera(false);
             }
         }
-    }
-
-    private void OnRollEnd(int arg0, float arg1)
-    {
-        StartCoroutine(ZoomSequence());
-
-        IEnumerator ZoomSequence()
+        else
         {
-            yield return new WaitForSeconds(arg1);
             ZoomCamera(false);
         }
     }
+
 
     private void OnRollStart()
     {

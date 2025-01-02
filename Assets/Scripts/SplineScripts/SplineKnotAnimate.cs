@@ -36,7 +36,7 @@ public class SplineKnotAnimate : MonoBehaviour
 
     [Header("Events")]
     [HideInInspector] public UnityEvent<bool> OnEnterJunction;
-    [HideInInspector] public UnityEvent<Vector3> OnJunctionSelection;
+    [HideInInspector] public UnityEvent<int> OnJunctionSelection;
     [HideInInspector] public UnityEvent<SplineKnotIndex> OnKnotEnter;
     [HideInInspector] public UnityEvent<SplineKnotIndex> OnKnotLand;
 
@@ -120,6 +120,7 @@ public class SplineKnotAnimate : MonoBehaviour
                 junctionIndex = 0;
                 isMoving = false;
                 OnEnterJunction.Invoke(true);
+                OnJunctionSelection.Invoke(junctionIndex);
             }
             else
             {
@@ -172,7 +173,10 @@ public class SplineKnotAnimate : MonoBehaviour
 
     public void AddToJunctionIndex(int amount)
     {
+        if (!inJunction)
+            return;
         junctionIndex = (int)Mathf.Repeat(junctionIndex + amount, walkableKnots.Count);
+        OnJunctionSelection.Invoke(junctionIndex);
     }
 
     public void SelectJunctionPath(int index)
@@ -191,12 +195,12 @@ public class SplineKnotAnimate : MonoBehaviour
         walkableKnots.Clear();
     }
 
-    public Vector3 GetJunctionPathPosition()
+    public Vector3 GetJunctionPathPosition(int index)
     {
         if (walkableKnots.Count < 1)
             return Vector3.zero;
 
-        SplineKnotIndex walkableKnotIndex = walkableKnots[junctionIndex];
+        SplineKnotIndex walkableKnotIndex = walkableKnots[index];
         Spline walkableSpline = splineContainer.Splines[walkableKnotIndex.Spline];
         SplineKnotIndex nextWalkableKnotIndex = new SplineKnotIndex(walkableKnotIndex.Spline, (walkableKnotIndex.Knot + 1) % walkableSpline.Knots.Count());
         Vector3 knotPosition = (Vector3)walkableSpline.Knots.ToArray()[nextWalkableKnotIndex.Knot].Position + splineContainer.transform.position;
@@ -250,11 +254,10 @@ public class SplineKnotAnimate : MonoBehaviour
         return moveSpeed / splineLength;
     }
 
-
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         if (inJunction)
-            Gizmos.DrawSphere(GetJunctionPathPosition(), 1);
+            Gizmos.DrawSphere(GetJunctionPathPosition(junctionIndex), 1);
     }
 }
