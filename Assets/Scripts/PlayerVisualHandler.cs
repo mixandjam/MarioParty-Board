@@ -11,6 +11,7 @@ public class PlayerVisualHandler : MonoBehaviour
     private Animator animator;
     private PlayerController playerController;
     private SplineKnotAnimate splineKnotAnimator;
+    private SplineKnotInstantiate splineKnotData;
 
     [Header("References")]
     [SerializeField] private Transform playerModel;
@@ -46,6 +47,8 @@ public class PlayerVisualHandler : MonoBehaviour
         splineKnotAnimator = GetComponentInParent<SplineKnotAnimate>();
         numberLabels = GetComponentsInChildren<TextMeshPro>();
         playerDice.gameObject.SetActive(false);
+        if (FindAnyObjectByType<SplineKnotInstantiate>() != null)
+            splineKnotData = FindAnyObjectByType<SplineKnotInstantiate>();
 
         playerController.OnRollStart.AddListener(OnRollStart);
         playerController.OnRollJump.AddListener(OnRollJump);
@@ -92,19 +95,19 @@ public class PlayerVisualHandler : MonoBehaviour
         playerDice.gameObject.SetActive(false);
     }
 
-    private void OnMovementStart(bool arg0)
+    private void OnMovementStart(bool movement)
     {
-        if (arg0)
-            transform.DOLocalRotate(Vector3.zero, .6f);
+        if (movement)
+            transform.DOLocalRotate(Vector3.zero, .3f);
         else
             transform.DOLookAt(Camera.main.transform.position, .35f, AxisConstraint.Y);
 
     }
 
-    private void OnKnotLand(SplineKnotIndex arg0)
+    private void OnKnotLand(SplineKnotIndex index)
     {
-        int random = Random.Range(0, 2);
-        animator.SetTrigger(random == 0 ? "Happy" : "Sad");
+        SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
+        animator.SetTrigger(data.coinGain > 0 ? "Happy" : "Sad");
     }
 
     private void OnEnterJunction(bool junction)
