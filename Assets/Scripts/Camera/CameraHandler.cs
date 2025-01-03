@@ -38,9 +38,12 @@ public class CameraHandler : MonoBehaviour
             StartCoroutine(ZoomSequence());
             IEnumerator ZoomSequence()
             {
+
+                playerController.AllowInput(false);
                 ZoomCamera(true);
                 yield return new WaitForSeconds(1.5f);
                 ZoomCamera(false);
+                playerController.AllowInput(true);
             }
         }
         else

@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("States")]
     public bool isRolling;
+    public bool allowInput = true;
 
     void Start()
     {
@@ -56,6 +57,10 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+
+        if (!allowInput)
+            return;
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             if (splineKnotAnimator.isMoving)
@@ -97,6 +102,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator RollSequence()
     {
+        allowInput = false;
         OnRollJump.Invoke();
 
         roll = Random.Range(1, 11);
@@ -116,5 +122,11 @@ public class PlayerController : MonoBehaviour
 
         OnMovementStart.Invoke(true);
         OnMovementUpdate.Invoke(roll);
+        allowInput = true;
+    }
+
+    public void AllowInput(bool allow)
+    {
+        allowInput = allow;
     }
 }
