@@ -5,6 +5,7 @@ using UnityEngine.Splines;
 using TMPro;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerVisualHandler : MonoBehaviour
 {
@@ -40,6 +41,9 @@ public class PlayerVisualHandler : MonoBehaviour
     [Header("States")]
     private bool diceSpinning;
 
+    [Header("Dynamic Animation")]
+    [SerializeField] private Rig headRig;
+
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
@@ -63,6 +67,8 @@ public class PlayerVisualHandler : MonoBehaviour
     private void OnRollStart()
     {
         transform.DOLookAt(Camera.main.transform.position, .35f, AxisConstraint.Y);
+
+        DOVirtual.Float(0, 1, .4f, SetHeadWeight);
 
         diceSpinning = true;
 
@@ -98,10 +104,20 @@ public class PlayerVisualHandler : MonoBehaviour
     private void OnMovementStart(bool movement)
     {
         if (movement)
+        {
+            DOVirtual.Float(1, 0, .2f, SetHeadWeight);
             transform.DOLocalRotate(Vector3.zero, .3f);
+        }
         else
+        {
             transform.DOLookAt(Camera.main.transform.position, .35f, AxisConstraint.Y);
+        }
 
+    }
+
+    void SetHeadWeight(float headWeight)
+    {
+        headRig.weight = headWeight;
     }
 
     private void OnKnotLand(SplineKnotIndex index)
