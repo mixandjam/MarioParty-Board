@@ -42,9 +42,15 @@ public class PlayerController : MonoBehaviour
     private void OnKnotLand(SplineKnotIndex index)
     {
         SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
-        //Debug.Log($"Landed: S{data.knotIndex.Spline}K{data.knotIndex.Knot}");
 
-        OnMovementStart.Invoke(false);
+        StartCoroutine(DelayCoroutine());
+        IEnumerator DelayCoroutine()
+        {
+            yield return new WaitForSeconds(.08f);
+            OnMovementStart.Invoke(false);
+            data.Land();
+
+        }
     }
 
     private void OnKnotEnter(SplineKnotIndex index)

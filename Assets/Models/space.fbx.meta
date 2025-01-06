@@ -14,6 +14,16 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Space
     second: {fileID: 2100000, guid: 23f0415aac8ed4c07bc37247d4f37aea, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: boardBase
+    second: {fileID: 2100000, guid: 23f0415aac8ed4c07bc37247d4f37aea, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: boardMetal
+    second: {fileID: 2100000, guid: 4797babee50394bbe9979b1590d44613, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -98,7 +108,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.01
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0
