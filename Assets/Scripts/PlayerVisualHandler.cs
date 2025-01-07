@@ -56,6 +56,7 @@ public class PlayerVisualHandler : MonoBehaviour
 
         playerController.OnRollStart.AddListener(OnRollStart);
         playerController.OnRollJump.AddListener(OnRollJump);
+        playerController.OnRollCancel.AddListener(OnRollCancel);
         playerController.OnRollDisplay.AddListener(OnRollDisplay);
         playerController.OnRollEnd.AddListener(OnRollEnd);
         playerController.OnMovementStart.AddListener(OnMovementStart);
@@ -78,6 +79,14 @@ public class PlayerVisualHandler : MonoBehaviour
         playerDice.DOScale(0, .3f).From();
     }
 
+    private void OnRollCancel()
+    {
+        DOVirtual.Float(1, 0, .4f, SetHeadWeight);
+        diceSpinning = false;
+        playerDice.gameObject.SetActive(false);
+
+    }
+
     private void OnRollJump()
     {
         playerModel.DOComplete();
@@ -93,6 +102,7 @@ public class PlayerVisualHandler : MonoBehaviour
         playerDice.transform.eulerAngles = Vector3.zero;
         Vector3 diceLocalPos = playerDice.localPosition;
         playerDice.DOLocalJump(diceLocalPos, .8f, 1, .25f);
+        playerDice.DOPunchScale(Vector3.one / 4, .3f, 10, 1);
     }
 
 

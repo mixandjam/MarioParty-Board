@@ -12,7 +12,7 @@ public class CameraHandler : MonoBehaviour
     [SerializeField] private CinemachineCamera defaultCamera;
     [SerializeField] private CinemachineCamera zoomCamera;
     [SerializeField] private CinemachineCamera junctionCamera;
-    [SerializeField] private Volume depthOfFieldVolume;
+    // [SerializeField] private Volume depthOfFieldVolume;
 
     [Header("States")]
     private bool isZoomed = false;
@@ -22,6 +22,7 @@ public class CameraHandler : MonoBehaviour
         splineKnotAnimator = playerController.GetComponent<SplineKnotAnimate>();
 
         playerController.OnRollStart.AddListener(OnRollStart);
+        playerController.OnRollCancel.AddListener(OnRollCancel);
         playerController.OnMovementStart.AddListener(OnMovementStart);
         splineKnotAnimator.OnEnterJunction.AddListener(OnEnterJunction);
     }
@@ -58,9 +59,14 @@ public class CameraHandler : MonoBehaviour
         ZoomCamera(true);
     }
 
+    private void OnRollCancel()
+    {
+        ZoomCamera(false);
+    }
+
     private void Update()
     {
-        depthOfFieldVolume.weight = Mathf.Lerp(depthOfFieldVolume.weight, isZoomed ? 1 : -1, 10 * Time.deltaTime);
+        //depthOfFieldVolume.weight = Mathf.Lerp(depthOfFieldVolume.weight, isZoomed ? 1 : -1, 10 * Time.deltaTime);
     }
 
     public void ZoomCamera(bool zoom)

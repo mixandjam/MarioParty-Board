@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.InputSystem;
 using UnityEngine.Splines;
 
 [RequireComponent(typeof(SplineKnotAnimate))]
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public UnityEvent OnRollJump;
     [HideInInspector] public UnityEvent<int> OnRollDisplay;
     [HideInInspector] public UnityEvent OnRollEnd;
+    [HideInInspector] public UnityEvent OnRollCancel;
     [HideInInspector] public UnityEvent<bool> OnMovementStart;
     [HideInInspector] public UnityEvent<int> OnMovementUpdate;
 
@@ -49,7 +51,11 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(.08f);
             OnMovementStart.Invoke(false);
             data.Land();
-
+            yield return new WaitForSeconds(2);
+            if (FindAnyObjectByType<TurnUI>() != null)
+            {
+                FindAnyObjectByType<TurnUI>().StartPlayerTurn(this);
+            }
         }
     }
 
@@ -61,45 +67,7 @@ public class PlayerController : MonoBehaviour
         OnMovementUpdate.Invoke(splineKnotAnimator.Step);
     }
 
-    void Update()
-    {
-
-        if (!allowInput)
-            return;
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            if (splineKnotAnimator.isMoving)
-                return;
-
-            if (splineKnotAnimator.inJunction)
-            {
-                splineKnotAnimator.inJunction = false;
-            }
-            else
-            {
-                if (isRolling)
-                {
-                    StartCoroutine(RollSequence());
-                }
-                else
-                    PrepareToRoll();
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.UpArrow))
-        {
-            splineKnotAnimator.AddToJunctionIndex(1);
-        }
-
-        if (Input.GetKeyDown(KeyCode.DownArrow))
-        {
-            splineKnotAnimator.AddToJunctionIndex(-1);
-        }
-
-    }
-
-    private void PrepareToRoll()
+    public void PrepareToRoll()
     {
         isRolling = true;
 
@@ -134,5 +102,54 @@ public class PlayerController : MonoBehaviour
     public void AllowInput(bool allow)
     {
         allowInput = allow;
+    }
+
+    void OnJump()
+    {
+        if (!allowInput)
+            return;
+
+
+        if (splineKnotAnimator.isMoving)
+            return;
+
+        if (splineKnotAnimator.inJunction)
+        {
+            splineKnotAnimator.inJunction = false;
+        }
+        else
+        {
+            if (isRolling)
+            {
+                StartCoroutine(RollSequence());
+            }
+        }
+    }
+
+    void OnMove(InputValue value)
+    {
+        if (!allowInput)
+            return;
+
+        if (value.Get<Vector2>().y != 0)
+            splineKnotAnimator.AddToJunctionIndex(-(int)value.Get<Vector2>().y);
+    }
+
+    void OnCancel()
+    {
+        if (!allowInput)
+            return;
+
+        if (!isRolling)
+            return;
+
+        isRolling = false;
+
+        if (FindAnyObjectByType<TurnUI>() != null)
+        {
+            FindAnyObjectByType<TurnUI>().StartPlayerTurn(this);
+        }
+
+        OnRollCancel.Invoke();
     }
 }

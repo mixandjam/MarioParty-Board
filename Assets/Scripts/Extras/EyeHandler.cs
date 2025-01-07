@@ -10,10 +10,10 @@ public class EyeHandler : MonoBehaviour
         switch (type)
         {
             case "happy":
-                offset = new Vector2(.33f,0);
+                offset = new Vector2(.33f, 0);
                 break;
             case "sad":
-                offset = new Vector2(.33f, -.33f);
+                offset = new Vector2(0, -.33f);
                 break;
             case "default":
                 offset = Vector2.zero;

@@ -13,6 +13,7 @@ public class RollUI : MonoBehaviour
 
     [Header("Parameters")]
     [SerializeField] private Vector3 textOffset;
+    [SerializeField] private float followSmoothness = 5;
 
     private bool rolling = false;
 
@@ -37,9 +38,9 @@ public class RollUI : MonoBehaviour
         rolling = true;
     }
 
-    private void Update()
+    private void LateUpdate()
     {
-        float movementBlend = Mathf.Pow(0.5f, Time.deltaTime * 10);
+        float movementBlend = Mathf.Pow(0.5f, Time.deltaTime * followSmoothness);
         Vector3 screenPosition = Camera.main.WorldToScreenPoint(rolling ? playerDice.position : player.transform.position + textOffset);
         rollTextMesh.transform.position = Vector3.Lerp(rollTextMesh.transform.position, screenPosition, movementBlend);
     }
