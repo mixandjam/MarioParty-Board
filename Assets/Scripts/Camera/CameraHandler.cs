@@ -12,6 +12,7 @@ public class CameraHandler : MonoBehaviour
     [SerializeField] private CinemachineCamera defaultCamera;
     [SerializeField] private CinemachineCamera zoomCamera;
     [SerializeField] private CinemachineCamera junctionCamera;
+    [SerializeField] private CinemachineCamera boardCamera;
     // [SerializeField] private Volume depthOfFieldVolume;
 
     [Header("States")]
@@ -74,6 +75,12 @@ public class CameraHandler : MonoBehaviour
         defaultCamera.Priority = zoom ? -1 : 1;
         zoomCamera.Priority = zoom ? 1 : -1;
         isZoomed = zoom;
+    }
+
+    public void ShowBoard(bool showBoard)
+    {
+        defaultCamera.Priority = showBoard ? -1 : 1;
+        boardCamera.Priority = showBoard ? 1 : -1;
     }
 
 }

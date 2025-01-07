@@ -25,8 +25,6 @@ public class KnotVisualHandler : MonoBehaviour
 
     private void OnLand()
     {
-        Debug.Log("Do shine");
-
         knotRenderer.materials[1].DOColor(landEmissionColor, .4f).OnComplete(() => knotRenderer.materials[1].DOColor(originalEmissionColor, .4f)).SetDelay(glowDelay);
     }
 

@@ -83,7 +83,8 @@ public class PlayerVisualHandler : MonoBehaviour
     {
         DOVirtual.Float(1, 0, .4f, SetHeadWeight);
         diceSpinning = false;
-        playerDice.gameObject.SetActive(false);
+        playerDice.DOComplete();
+        playerDice.DOScale(0, .12f).OnComplete(() => { playerDice.gameObject.SetActive(false); playerDice.transform.localScale = Vector3.one; });
 
     }
 
