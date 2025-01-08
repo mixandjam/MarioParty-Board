@@ -11,6 +11,10 @@ public class KnotVisualHandler : MonoBehaviour
     [SerializeField] private float glowIntensity = 2;
     [SerializeField] private float glowDelay = .2f;
 
+    [Header("Particles")]
+    [SerializeField] private ParticleSystem coinGainParticle;
+    [SerializeField] private ParticleSystem coinLossParticle;
+
     void Start()
     {
         knotData = GetComponentInParent<SplineKnotData>();
@@ -23,9 +27,16 @@ public class KnotVisualHandler : MonoBehaviour
         knotData.OnLand.AddListener(OnLand);
     }
 
-    private void OnLand()
+    private void OnLand(int coinGain)
     {
         knotRenderer.materials[1].DOColor(landEmissionColor, .4f).OnComplete(() => knotRenderer.materials[1].DOColor(originalEmissionColor, .4f)).SetDelay(glowDelay);
+
+        if (coinGain > 0)
+            coinGainParticle.Play();
+        else if (coinGain < 0)
+        {
+            coinLossParticle.Play();
+        }
     }
 
 }

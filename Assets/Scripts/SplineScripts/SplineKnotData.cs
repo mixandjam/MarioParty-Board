@@ -6,7 +6,7 @@ public class SplineKnotData : MonoBehaviour
 {
     public SplineKnotIndex knotIndex;
 
-    [HideInInspector] public UnityEvent OnLand;
+    [HideInInspector] public UnityEvent<int> OnLand;
 
     public int coinGain = 3;
 
@@ -15,9 +15,10 @@ public class SplineKnotData : MonoBehaviour
         //gameObject.hideFlags = HideFlags.NotEditable;
     }
 
-    public void Land()
+    public void Land(PlayerStats playerStats)
     {
-        OnLand.Invoke();
+        playerStats.AddCoins(coinGain);
+        OnLand.Invoke(coinGain);
 
     }
 

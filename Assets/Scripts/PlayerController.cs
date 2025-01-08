@@ -7,6 +7,7 @@ using UnityEngine.Splines;
 [RequireComponent(typeof(SplineKnotAnimate))]
 public class PlayerController : MonoBehaviour
 {
+    private PlayerStats stats;
     private SplineKnotAnimate splineKnotAnimator;
     private SplineKnotInstantiate splineKnotData;
     [SerializeField] private int roll = 0;
@@ -32,6 +33,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        stats = GetComponent<PlayerStats>();
         splineKnotAnimator = GetComponent<SplineKnotAnimate>();
 
         splineKnotAnimator.OnKnotEnter.AddListener(OnKnotEnter);
@@ -50,7 +52,7 @@ public class PlayerController : MonoBehaviour
         {
             yield return new WaitForSeconds(.08f);
             OnMovementStart.Invoke(false);
-            data.Land();
+            data.Land(stats);
             yield return new WaitForSeconds(2);
             if (FindAnyObjectByType<TurnUI>() != null)
             {
