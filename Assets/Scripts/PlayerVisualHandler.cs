@@ -44,6 +44,10 @@ public class PlayerVisualHandler : MonoBehaviour
     [Header("Dynamic Animation")]
     [SerializeField] private Rig headRig;
 
+    [Header("Particles")]
+    [SerializeField] private ParticleSystem coinGainParticle;
+    [SerializeField] private ParticleSystem coinLossParticle;
+
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
@@ -134,6 +138,12 @@ public class PlayerVisualHandler : MonoBehaviour
     private void OnKnotLand(SplineKnotIndex index)
     {
         SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
+
+        if (data.coinGain > 0)
+            coinGainParticle.Play();
+        else if (data.coinGain < 0)
+            coinLossParticle.Play();
+
         animator.SetTrigger(data.coinGain > 0 ? "Happy" : "Sad");
     }
 

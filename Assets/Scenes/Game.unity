@@ -7035,6 +7035,10 @@ PrefabInstance:
       propertyPath: splineContainer
       value: 
       objectReference: {fileID: 1433502786}
+    - target: {fileID: 8157967156149626805, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8651838001116464818, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
       propertyPath: m_Name
       value: Player
