@@ -10,7 +10,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 354023166855276227, guid: 5c11467321dac483a8e7a8f1ecf64346, type: 3}
       propertyPath: coinGain
-      value: -3
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 1477864702323894160, guid: 5c11467321dac483a8e7a8f1ecf64346, type: 3}
       propertyPath: m_Name

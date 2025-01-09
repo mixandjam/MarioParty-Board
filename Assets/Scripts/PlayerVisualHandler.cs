@@ -11,6 +11,7 @@ public class PlayerVisualHandler : MonoBehaviour
 {
     private Animator animator;
     private PlayerController playerController;
+    private PlayerStats playerStats;
     private SplineKnotAnimate splineKnotAnimator;
     private SplineKnotInstantiate splineKnotData;
 
@@ -47,16 +48,19 @@ public class PlayerVisualHandler : MonoBehaviour
     [Header("Particles")]
     [SerializeField] private ParticleSystem coinGainParticle;
     [SerializeField] private ParticleSystem coinLossParticle;
+    private float particleRepeatInterval;
 
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
         playerController = GetComponentInParent<PlayerController>();
+        playerStats = GetComponentInParent<PlayerStats>();
         splineKnotAnimator = GetComponentInParent<SplineKnotAnimate>();
         numberLabels = GetComponentsInChildren<TextMeshPro>();
         playerDice.gameObject.SetActive(false);
         if (FindAnyObjectByType<SplineKnotInstantiate>() != null)
             splineKnotData = FindAnyObjectByType<SplineKnotInstantiate>();
+        particleRepeatInterval = coinGainParticle.emission.GetBurst(0).repeatInterval;
 
         playerController.OnRollStart.AddListener(OnRollStart);
         playerController.OnRollJump.AddListener(OnRollJump);
@@ -138,6 +142,12 @@ public class PlayerVisualHandler : MonoBehaviour
     private void OnKnotLand(SplineKnotIndex index)
     {
         SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
+
+        short count = (short)(data.coinGain > 0 ? 1 : Mathf.Clamp(Mathf.Abs(data.coinGain), 0, playerStats.Coins));
+        int cycle = data.coinGain > 0 ? Mathf.Abs(data.coinGain) : 1;
+        ParticleSystem.Burst burst = new ParticleSystem.Burst(0, count, count, cycle, particleRepeatInterval / Mathf.Sqrt(count));
+        coinGainParticle.emission.SetBurst(0, burst);
+        coinLossParticle.emission.SetBurst(0, burst);
 
         if (data.coinGain > 0)
             coinGainParticle.Play();

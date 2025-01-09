@@ -52,7 +52,7 @@ MonoBehaviour:
   OnLand:
     m_PersistentCalls:
       m_Calls: []
-  coinGain: 3
+  coinGain: 10
 --- !u!135 &5017717787491301776
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -123,8 +123,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   glowIntensity: 2.5
   glowDelay: 0.1
-  coinGainParticle: {fileID: 0}
-  coinLossParticle: {fileID: 0}
 --- !u!1 &5272575949134020590
 GameObject:
   m_ObjectHideFlags: 0
