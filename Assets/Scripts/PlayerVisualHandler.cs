@@ -213,6 +213,7 @@ public class PlayerVisualHandler : MonoBehaviour
     {
 
         float speed = splineKnotAnimator.isMoving ? 1 : 0;
+        speed = splineKnotAnimator.Paused ? 0 : speed;
         float fadeSpeed = splineKnotAnimator.isMoving ? .1f : .05f;
 
         animator.SetFloat("Blend", speed, fadeSpeed, Time.deltaTime);

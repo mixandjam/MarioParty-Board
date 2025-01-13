@@ -10,9 +10,18 @@ public class SplineKnotData : MonoBehaviour
 
     public int coinGain = 3;
 
+    [SerializeField] private bool pauseMovement = false;
+    [SerializeField] private bool skipStepCount = false;
+
     private void OnValidate()
     {
         //gameObject.hideFlags = HideFlags.NotEditable;
+    }
+
+    public void EnterKnot(SplineKnotAnimate splineKnotAnimator)
+    {
+        splineKnotAnimator.Paused = pauseMovement;
+        //splineKnotAnimator.SkipStepCount = skipStepCount;
     }
 
     public void Land(PlayerStats playerStats)

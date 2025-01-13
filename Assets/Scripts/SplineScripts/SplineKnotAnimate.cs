@@ -33,6 +33,7 @@ public class SplineKnotAnimate : MonoBehaviour
     public bool isMoving = false;
     public bool inJunction = false;
     public bool Paused = false;
+    [HideInInspector] public bool SkipStepCount = false;
 
     [Header("Events")]
     [HideInInspector] public UnityEvent<bool> OnEnterJunction;
@@ -124,8 +125,11 @@ public class SplineKnotAnimate : MonoBehaviour
             }
             else
             {
-                //Movement only count on non-junction knots
-                remainingSteps--;
+                //Movement only count on non-junction knots and when nothin overrides the skip property
+                if (!SkipStepCount)
+                    remainingSteps--;
+                else
+                    SkipStepCount = false;
             }
 
             OnKnotEnter.Invoke(currentKnot);

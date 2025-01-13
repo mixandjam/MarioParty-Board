@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
     {
         SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
         //Debug.Log($"Entered: S{data.knotIndex.Spline}K{data.knotIndex.Knot}");
-
+        data.EnterKnot(splineKnotAnimator);
         OnMovementUpdate.Invoke(splineKnotAnimator.Step);
     }
 
