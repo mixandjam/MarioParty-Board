@@ -22,7 +22,7 @@ public class TerrainStamper : MonoBehaviour
     [Range(-10f, 10f)] public float baseHeight = 0f;
 
     [Header("Advanced")]
-    [Range(0f, 1f)] public float spacing = .1f;
+    [Range(1, 5)] public float spacing = 1;
 
     [Header("Debug")]
     public bool showSpacingGizmo = false;
@@ -207,17 +207,21 @@ public class TerrainStamper : MonoBehaviour
 
     private Vector3[] GetSplinePoints()
     {
-        float currentT = 0;
         List<Vector3> points = new List<Vector3>();
+
         foreach (Spline spline in splineContainer.Splines)
         {
-            while (currentT < 1)
+            float splineLength = spline.GetLength();
+            float stepSize = spacing / splineLength;
+            float currentT = 0f;
+
+            while (currentT < 1f)
             {
                 points.Add(spline.EvaluatePosition(currentT));
-                currentT += spacing;
+                currentT += stepSize;
             }
-            currentT = 0;
         }
+
         return points.ToArray();
     }
 

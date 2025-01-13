@@ -418,8 +418,8 @@ MonoBehaviour:
   textureOpacity: 1
   paintFalloff: 3
   heightFalloff: 1
-  baseHeight: 0.95
-  spacing: 0.029
+  baseHeight: 0.97
+  spacing: 1
   showSpacingGizmo: 0
 --- !u!1001 &92708460
 PrefabInstance:
