@@ -36,11 +36,19 @@ public class PlayerController : MonoBehaviour
         stats = GetComponent<PlayerStats>();
         splineKnotAnimator = GetComponent<SplineKnotAnimate>();
 
+        splineKnotAnimator.OnDestinationKnot.AddListener(OnDestinationKnot);
         splineKnotAnimator.OnKnotEnter.AddListener(OnKnotEnter);
         splineKnotAnimator.OnKnotLand.AddListener(OnKnotLand);
 
         if (FindAnyObjectByType<SplineKnotInstantiate>() != null)
             splineKnotData = FindAnyObjectByType<SplineKnotInstantiate>();
+    }
+
+    private void OnDestinationKnot(SplineKnotIndex index)
+    {
+        SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
+        if (data.skipStepCount)
+            splineKnotAnimator.SkipStepCount = true;
     }
 
     private void OnKnotLand(SplineKnotIndex index)

@@ -38,6 +38,7 @@ public class SplineKnotAnimate : MonoBehaviour
     [Header("Events")]
     [HideInInspector] public UnityEvent<bool> OnEnterJunction;
     [HideInInspector] public UnityEvent<int> OnJunctionSelection;
+    [HideInInspector] public UnityEvent<SplineKnotIndex> OnDestinationKnot;
     [HideInInspector] public UnityEvent<SplineKnotIndex> OnKnotEnter;
     [HideInInspector] public UnityEvent<SplineKnotIndex> OnKnotLand;
 
@@ -92,6 +93,8 @@ public class SplineKnotAnimate : MonoBehaviour
         nextKnot = new SplineKnotIndex(currentKnot.Spline, (currentKnot.Knot + 1) % spline.Knots.Count());
         currentT = spline.ConvertIndexUnit(currentKnot.Knot, PathIndexUnit.Knot, PathIndexUnit.Normalized);
         float nextT;
+
+        OnDestinationKnot.Invoke(nextKnot);
 
         if (nextKnot.Knot == 0 && spline.Closed)
             nextT = 1f;

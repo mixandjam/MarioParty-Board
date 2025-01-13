@@ -11,7 +11,12 @@ public class SplineKnotData : MonoBehaviour
     public int coinGain = 3;
 
     [SerializeField] private bool pauseMovement = false;
-    [SerializeField] private bool skipStepCount = false;
+    [SerializeField] public bool skipStepCount = false;
+    [SerializeField] private bool starKnot = false;
+
+
+    [Header("Event")]
+    [SerializeField] private SpaceEvent spaceEvent;
 
     private void OnValidate()
     {
@@ -21,7 +26,10 @@ public class SplineKnotData : MonoBehaviour
     public void EnterKnot(SplineKnotAnimate splineKnotAnimator)
     {
         splineKnotAnimator.Paused = pauseMovement;
-        //splineKnotAnimator.SkipStepCount = skipStepCount;
+
+        if (spaceEvent != null)
+            spaceEvent.StartEvent(splineKnotAnimator);
+
     }
 
     public void Land(PlayerStats playerStats)

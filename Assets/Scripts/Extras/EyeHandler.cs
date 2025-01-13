@@ -20,7 +20,7 @@ public class EyeHandler : MonoBehaviour
                 break;
         }
 
-        jammoRenderer.materials[1].SetTextureOffset("_MainTex", offset);
+        jammoRenderer.sharedMaterials[1].SetTextureOffset("_MainTex", offset);
     }
 
 

@@ -1,4 +1,4 @@
-using System;
+using UnityEngine.Events;
 using System.Collections;
 using DG.Tweening;
 using Unity.Cinemachine;
@@ -11,7 +11,9 @@ using UnityEngine.UI;
 public class TurnUI : MonoBehaviour
 {
     [SerializeField] private PlayerController currentPlayer;
-    private CanvasGroup canvasGroup;
+    [SerializeField] private CanvasGroup actionsCanvasGroup;
+    [SerializeField] private CanvasGroup rollCanvasGroup;
+    [SerializeField] private CanvasGroup starPurchasCanvasGroup;
 
     [Header("States")]
     private bool isShowingBoard;
@@ -20,6 +22,12 @@ public class TurnUI : MonoBehaviour
     [SerializeField] private Button diceButton;
     [SerializeField] private Button itemButton;
     [SerializeField] private Button boardButton;
+
+    [Header("Star Purchase UI References")]
+    [SerializeField] private Button starConfirmButton;
+    public Button StarButton => starConfirmButton;
+    [SerializeField] private Button starCancelButton;
+    public Button CancelStarButton => starCancelButton;
 
 
     [Header("Overlay Camera Settings")]
@@ -32,8 +40,7 @@ public class TurnUI : MonoBehaviour
 
     void Start()
     {
-        canvasGroup = GetComponentInChildren<CanvasGroup>();
-        canvasGroup.alpha = 0;
+        actionsCanvasGroup.alpha = 0;
         diceButton.onClick.AddListener(OnDiceButtonSelect);
         boardButton.onClick.AddListener(OnBoardButtonSelect);
         originalCameraOffset = overlayCameraOffset.Offset;
@@ -78,7 +85,7 @@ public class TurnUI : MonoBehaviour
     void ShowUI(bool show)
     {
         DOVirtual.Float(show ? disableCameraOffset : 0, show ? 0 : disableCameraOffset, .4f, CameraOffset);
-        canvasGroup.DOFade(show ? 1 : 0, .3f);
+        actionsCanvasGroup.DOFade(show ? 1 : 0, .3f);
 
         StartCoroutine(EventSystemSelectionDelay());
 
@@ -101,6 +108,21 @@ public class TurnUI : MonoBehaviour
     void CameraOffset(float x)
     {
         overlayCameraOffset.Offset = originalCameraOffset + new Vector3(x, 0, 0);
+    }
+
+    public void FadeRollText(bool fadeText)
+    {
+        rollCanvasGroup.DOFade(fadeText ? 0 : 1, .3f);
+    }
+
+    public void ShowStarPurchaseUI(bool show)
+    {
+        FadeRollText(show);
+        starPurchasCanvasGroup.DOFade(show ? 1 : 0, .2f);
+        if (show)
+            EventSystem.current.SetSelectedGameObject(starConfirmButton.gameObject);
+        else
+            EventSystem.current.SetSelectedGameObject(null);
     }
 
 }
