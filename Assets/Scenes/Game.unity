@@ -360,7 +360,7 @@ Terrain:
   m_TreeMaximumFullLODCount: 50
   m_DetailObjectDistance: 80
   m_DetailObjectDensity: 1
-  m_HeightmapPixelError: 5
+  m_HeightmapPixelError: 1
   m_SplatMapDistance: 1000
   m_HeightmapMinimumLODSimplification: 0
   m_HeightmapMaximumLOD: 0
@@ -381,7 +381,7 @@ Terrain:
   m_GroupingID: 0
   m_RenderingLayerMask: 1
   m_AllowAutoConnect: 1
-  m_EnableHeightmapRayTracing: 1
+  m_EnableHeightmapRayTracing: 0
   m_EnableTreesAndDetailsRayTracing: 0
   m_TreeMotionVectorModeOverride: 3
 --- !u!4 &79643667
@@ -393,7 +393,7 @@ Transform:
   m_GameObject: {fileID: 79643663}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -100, y: -1, z: -100}
+  m_LocalPosition: {x: -100, y: -0.5, z: -100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -413,12 +413,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   terrain: {fileID: 79643666}
   splineContainer: {fileID: 1433502786}
-  pathWidth: 2
+  pathWidth: 1
   textureLayer: 1
   textureOpacity: 1
-  paintFalloff: 3
-  heightFalloff: 1
-  baseHeight: 0.97
+  paintFalloff: 2.8
+  heightFalloff: 2
+  baseHeight: 0.47
   spacing: 1
   showSpacingGizmo: 0
 --- !u!1001 &92708460
