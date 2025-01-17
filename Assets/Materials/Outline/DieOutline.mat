@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader Graphs_SimpleOutline
+  m_Name: DieOutline
   m_Shader: {fileID: -6465566751694194690, guid: 9e439d21a7a6648f2b96981e41cba1fe, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

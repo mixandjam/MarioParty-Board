@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Splines;
 
 [ExecuteInEditMode]
-public class TerrainStamper : MonoBehaviour
+public class SplineTerrainStamper : MonoBehaviour
 {
     [SerializeField] private Terrain terrain;
     [SerializeField] private SplineContainer splineContainer;
