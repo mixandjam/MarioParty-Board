@@ -6,6 +6,7 @@ using TMPro;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Animations.Rigging;
+using Unity.Cinemachine;
 
 public class PlayerVisualHandler : MonoBehaviour
 {
@@ -48,6 +49,8 @@ public class PlayerVisualHandler : MonoBehaviour
     [Header("Particles")]
     [SerializeField] private ParticleSystem coinGainParticle;
     [SerializeField] private ParticleSystem coinLossParticle;
+    [SerializeField] private ParticleSystem diceHitParticle;
+    [SerializeField] private ParticleSystem diceResultParticle;
     private float particleRepeatInterval;
 
     void Start()
@@ -105,6 +108,9 @@ public class PlayerVisualHandler : MonoBehaviour
 
     private void OnRollDisplay(int roll)
     {
+        diceHitParticle.Play();
+        if (diceHitParticle.GetComponent<CinemachineImpulseSource>() != null)
+            diceHitParticle.GetComponent<CinemachineImpulseSource>().GenerateImpulse();
         playerDice.DOComplete();
         diceSpinning = false;
         SetDiceNumber(roll);
@@ -118,6 +124,7 @@ public class PlayerVisualHandler : MonoBehaviour
     private void OnRollEnd()
     {
         playerDice.gameObject.SetActive(false);
+        diceResultParticle.Play();
     }
 
     private void OnMovementStart(bool movement)
