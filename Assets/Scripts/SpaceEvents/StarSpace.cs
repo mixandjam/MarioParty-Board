@@ -39,10 +39,13 @@ public class StarSpace : SpaceEvent
         {
             cameraHandler.ZoomCamera(false);
             turnUI.ShowStarPurchaseUI(false);
+            starTransform.DOScale(0, .1f);
             starTimelineDirector.Play();
             yield return new WaitUntil(() => starTimelineDirector.state == PlayState.Paused);
             FocusOnStar(false);
+            starTransform.DOScale(1, .5f).SetEase(Ease.OutBack);
             currentSplineKnotAnimator.Paused = false;
+            turnUI.FadeRollText(false);
         }
     }
 
@@ -51,6 +54,7 @@ public class StarSpace : SpaceEvent
         base.StartEvent(animator);
         currentSplineKnotAnimator = animator;
         FocusOnStar(true);
+        turnUI.FadeRollText(true);
     }
 
     public void FocusOnStar(bool focus)
@@ -61,7 +65,5 @@ public class StarSpace : SpaceEvent
             currentSplineKnotAnimator.transform.GetChild(0).DOLookAt(starTransform.position, .5f, AxisConstraint.Y);
         else
             currentSplineKnotAnimator.transform.GetChild(0).DOLocalRotate(Vector3.zero, .3f);
-
-
     }
 }

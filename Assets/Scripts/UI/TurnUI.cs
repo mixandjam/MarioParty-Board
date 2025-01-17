@@ -117,7 +117,7 @@ public class TurnUI : MonoBehaviour
 
     public void ShowStarPurchaseUI(bool show)
     {
-        FadeRollText(show);
+        //FadeRollText(show);
         starPurchasCanvasGroup.DOFade(show ? 1 : 0, .2f);
         if (show)
             EventSystem.current.SetSelectedGameObject(starConfirmButton.gameObject);
