@@ -149,6 +149,8 @@ public class PlayerVisualHandler : MonoBehaviour
     private void OnKnotLand(SplineKnotIndex index)
     {
         SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
+        int animationRepetition = coinGainParticle.emission.GetBurst(0).cycleCount;
+        bool firstAnimation = true;
 
         short count = (short)(data.coinGain > 0 ? 1 : Mathf.Clamp(Mathf.Abs(data.coinGain), 0, playerStats.Coins));
         int cycle = data.coinGain > 0 ? Mathf.Abs(data.coinGain) : 1;
@@ -157,11 +159,28 @@ public class PlayerVisualHandler : MonoBehaviour
         coinLossParticle.emission.SetBurst(0, burst);
 
         if (data.coinGain > 0)
+        {
             coinGainParticle.Play();
+            StartCoroutine(StatUpdateCoroutine());
+        }
         else if (data.coinGain < 0)
+        {
             coinLossParticle.Play();
+            playerStats.CoinAnimation(data.coinGain);
+        }
 
         animator.SetTrigger(data.coinGain > 0 ? "Happy" : "Sad");
+
+        IEnumerator StatUpdateCoroutine()
+        {
+            animationRepetition--;
+            yield return new WaitForSeconds(firstAnimation ? coinGainParticle.main.startLifetime.constant : coinGainParticle.emission.GetBurst(0).repeatInterval);
+            firstAnimation = false;
+            playerStats.CoinAnimation(data.coinGain > 0 ? 1 : -1);
+            if (animationRepetition > 0)
+                StartCoroutine(StatUpdateCoroutine());
+
+        }
     }
 
     private void OnEnterJunction(bool junction)

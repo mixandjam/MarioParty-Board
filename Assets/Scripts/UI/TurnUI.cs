@@ -7,6 +7,8 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
+using TMPro;
+using System;
 
 public class TurnUI : MonoBehaviour
 {
@@ -14,6 +16,10 @@ public class TurnUI : MonoBehaviour
     [SerializeField] private CanvasGroup actionsCanvasGroup;
     [SerializeField] private CanvasGroup rollCanvasGroup;
     [SerializeField] private CanvasGroup starPurchasCanvasGroup;
+
+    [Header("Coin and Star References")]
+    [SerializeField] private TextMeshProUGUI startCountLabel;
+    [SerializeField] private TextMeshProUGUI coinCountLabel;
 
     [Header("States")]
     private bool isShowingBoard;
@@ -36,22 +42,35 @@ public class TurnUI : MonoBehaviour
     [SerializeField] private float disableCameraOffset;
 
     private GameObject lastSelectedButton;
+    private PlayerStats currentPlayerStats;
 
 
-    void Start()
+    void Awake()
     {
         actionsCanvasGroup.alpha = 0;
         diceButton.onClick.AddListener(OnDiceButtonSelect);
         boardButton.onClick.AddListener(OnBoardButtonSelect);
         originalCameraOffset = overlayCameraOffset.Offset;
         lastSelectedButton = diceButton.gameObject;
+        currentPlayerStats = currentPlayer.GetComponent<PlayerStats>();
+        currentPlayerStats.OnInitialize.AddListener(UpdatePlayerStats);
+        currentPlayerStats.OnAnimation.AddListener(StatAnimation);
 
         StartPlayerTurn(currentPlayer);
 
         EventSystem.current.GetComponent<InputSystemUIInputModule>().cancel.action.performed += CancelPerformed;
     }
 
+    private void StatAnimation(int coinCount)
+    {
+        coinCountLabel.text = coinCount.ToString();
+    }
 
+    private void UpdatePlayerStats()
+    {
+        startCountLabel.text = currentPlayerStats.Stars.ToString();
+        coinCountLabel.text = currentPlayerStats.Coins.ToString();
+    }
 
     public void StartPlayerTurn(PlayerController player)
     {
