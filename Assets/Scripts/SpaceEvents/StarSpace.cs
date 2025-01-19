@@ -11,6 +11,8 @@ public class StarSpace : SpaceEvent
     private PlayableDirector starTimelineDirector;
     private SplineKnotAnimate currentSplineKnotAnimator;
 
+
+    [SerializeField] private int starCost = 20;
     [SerializeField] private Transform starTransform;
 
     private void Start()
@@ -36,7 +38,7 @@ public class StarSpace : SpaceEvent
     {
         //Get Current Player, this would need to be adjusted with multiplayer
         PlayerStats playerStats = FindAnyObjectByType<PlayerStats>();
-        if (playerStats.Coins < 10)
+        if (playerStats.Coins < starCost)
             return;
 
 
@@ -44,7 +46,7 @@ public class StarSpace : SpaceEvent
 
         IEnumerator StarSequence()
         {
-            playerStats.AddCoins(-10);
+            playerStats.AddCoins(-starCost);
             playerStats.UpdateStats();
 
             cameraHandler.ZoomCamera(false);
