@@ -51,7 +51,7 @@ MonoBehaviour:
   OnLand:
     m_PersistentCalls:
       m_Calls: []
-  coinGain: 3
+  coinGain: 6
   pauseMovement: 0
   skipStepCount: 0
   starKnot: 0
