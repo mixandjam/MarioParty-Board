@@ -41,5 +41,6 @@ public class PlayerStats : MonoBehaviour
     public void UpdateStats()
     {
         OnInitialize.Invoke();
+        coinsBeforeChange = coins;
     }
 }

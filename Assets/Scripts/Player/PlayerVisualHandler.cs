@@ -149,14 +149,15 @@ public class PlayerVisualHandler : MonoBehaviour
     private void OnKnotLand(SplineKnotIndex index)
     {
         SplineKnotData data = splineKnotData.splineDatas[index.Spline].knots[index.Knot];
-        int animationRepetition = coinGainParticle.emission.GetBurst(0).cycleCount;
-        bool firstAnimation = true;
 
         short count = (short)(data.coinGain > 0 ? 1 : Mathf.Clamp(Mathf.Abs(data.coinGain), 0, playerStats.Coins));
         int cycle = data.coinGain > 0 ? Mathf.Abs(data.coinGain) : 1;
         ParticleSystem.Burst burst = new ParticleSystem.Burst(0, count, count, cycle, particleRepeatInterval / Mathf.Sqrt(count));
         coinGainParticle.emission.SetBurst(0, burst);
         coinLossParticle.emission.SetBurst(0, burst);
+        int animationRepetition = coinGainParticle.emission.GetBurst(0).cycleCount;
+        bool firstAnimation = true;
+
 
         if (data.coinGain > 0)
         {
@@ -166,7 +167,12 @@ public class PlayerVisualHandler : MonoBehaviour
         else if (data.coinGain < 0)
         {
             coinLossParticle.Play();
-            playerStats.CoinAnimation(data.coinGain);
+            StartCoroutine(DelayCoroutine());
+            IEnumerator DelayCoroutine()
+            {
+                yield return new WaitForSeconds(.15f);
+                playerStats.UpdateStats();
+            }
         }
 
         animator.SetTrigger(data.coinGain > 0 ? "Happy" : "Sad");

@@ -59,8 +59,8 @@ public class PlayerController : MonoBehaviour
         IEnumerator DelayCoroutine()
         {
             yield return new WaitForSeconds(.08f);
-            OnMovementStart.Invoke(false);
             data.Land(stats);
+            OnMovementStart.Invoke(false);
             yield return new WaitForSeconds(2);
             if (FindAnyObjectByType<TurnUI>() != null)
             {
