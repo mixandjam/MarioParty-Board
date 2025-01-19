@@ -2,10 +2,26 @@ using UnityEngine;
 
 public class EyeHandler : MonoBehaviour
 {
-
     [SerializeField] private Renderer jammoRenderer;
+    private Material eyeMaterialInstance;
+
+    private void Start()
+    {
+        eyeMaterialInstance = new Material(jammoRenderer.sharedMaterials[1]);
+
+        Material[] materials = jammoRenderer.materials;
+        materials[1] = eyeMaterialInstance;
+        jammoRenderer.materials = materials;
+    }
+
     public void ModifyEyes(string type)
     {
+        if (eyeMaterialInstance == null)
+        {
+            Debug.LogError("Eye material instance not initialized!");
+            return;
+        }
+
         Vector2 offset = Vector2.zero;
         switch (type)
         {
@@ -20,8 +36,6 @@ public class EyeHandler : MonoBehaviour
                 break;
         }
 
-        jammoRenderer.sharedMaterials[1].SetTextureOffset("_MainTex", offset);
+        eyeMaterialInstance.SetTextureOffset("_MainTex", offset);
     }
-
-
 }

@@ -53,6 +53,7 @@ public class PlayerVisualHandler : MonoBehaviour
     [SerializeField] private ParticleSystem diceResultParticle;
     private float particleRepeatInterval;
 
+
     void Start()
     {
         animator = GetComponentInChildren<Animator>();
