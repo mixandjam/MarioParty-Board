@@ -2180,6 +2180,7 @@ Transform:
   - {fileID: 674384828}
   - {fileID: 2139379918}
   - {fileID: 1610453301}
+  - {fileID: 913567558}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &482135521
@@ -4851,6 +4852,7 @@ GameObject:
   - component: {fileID: 913567557}
   - component: {fileID: 913567556}
   - component: {fileID: 913567555}
+  - component: {fileID: 913567559}
   - component: {fileID: 913567554}
   m_Layer: 0
   m_Name: ShowoffCamera
@@ -5065,8 +5067,25 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 482135520}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &913567559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 913567553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 449ef5ebbe24720439ec31d15f7b6f3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Weight: 1
+  FocusTracking: 1
+  FocusTarget: {fileID: 0}
+  FocusOffset: 0
+  Profile: {fileID: 11400000, guid: 7dc5d223377804bb58582ef62334d5b1, type: 2}
 --- !u!1 &922228251 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4227831821247229565, guid: 8c20c618bcbc84cd7a291cea89eda72c, type: 3}
@@ -7939,6 +7958,7 @@ GameObject:
   - component: {fileID: 1644082021}
   - component: {fileID: 1644082020}
   - component: {fileID: 1644082025}
+  - component: {fileID: 1644082026}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -8058,6 +8078,18 @@ MonoBehaviour:
   starCancelButton: {fileID: 292112100}
   overlayCameraOffset: {fileID: 342683852}
   disableCameraOffset: 7
+--- !u!225 &1644082026
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1644082019}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1648168217
 GameObject:
   m_ObjectHideFlags: 0
@@ -10058,7 +10090,6 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 4203322401365844316}
   - {fileID: 1644082023}
-  - {fileID: 1443200215}
   - {fileID: 182236299}
+  - {fileID: 1443200215}
   - {fileID: 1728746071}
-  - {fileID: 913567558}

@@ -1,4 +1,6 @@
-//This code is based on 
+//This code is based on the spline-stamper-unity-terrain-tool repository
+//https://github.com/Rumesic/spline-stamper-unity-terrain-tool/tree/master
+//Check LICENSE file for more details
 
 using System.Collections.Generic;
 using UnityEngine;
