@@ -39,6 +39,6 @@ Game Development
 
 This project is licensed under the MIT License
 
-##References
+## References
 
 Spline Stamper code reference from [Rumesic](https://github.com/Rumesic/spline-stamper-unity-terrain-tool)
