@@ -28,78 +28,266 @@ public class SplineTerrainStamper : MonoBehaviour
     [Header("Advanced")]
     [Range(1, 5)] public float spacing = 1;
 
+    [Header("Performance")]
+    [Tooltip("Delay in seconds after last change before updating terrain")]
+    [Range(0.1f, 1f)] public float updateDelay = 0.3f;
+    [Tooltip("Temporarily reduce spline sampling density during interaction")]
+    [Range(1f, 10f)] public float interactiveSpacingMultiplier = 3f;
+
     [Header("Debug")]
     public bool showSpacingGizmo = false;
+
+    private float[,] originalHeights;
+    private float[,,] originalAlphaMaps;
+    private bool needsUpdate = false;
+    
+    private float lastChangeTime;
+    private float originalSpacing;
+
+    private void OnEnable()
+    {
+        Spline.Changed += OnAnySplineChanged;
+        originalSpacing = spacing;
+        BackupTerrain();
+    }
+
+    private void OnDisable()
+    {
+        Spline.Changed -= OnAnySplineChanged;
+    }
+
+    private void Update()
+    {
+        // Restore original spacing after interaction
+        if (Time.realtimeSinceStartup - lastChangeTime > updateDelay && spacing != originalSpacing)
+        {
+            spacing = originalSpacing;
+            needsUpdate = true; // Ensure final high-res update
+        }
+
+        // Debounced update
+        if (needsUpdate && Time.realtimeSinceStartup - lastChangeTime >= updateDelay)
+        {
+            needsUpdate = false;
+            StampTerrain();
+        }
+    }
+
+    private void OnAnySplineChanged(Spline spline, int knotIndex, SplineModification modificationType)
+    {
+        if (splineContainer != null && SplineIsInContainer(spline))
+        {
+            lastChangeTime = Time.realtimeSinceStartup;
+            needsUpdate = true;
+            // Increase spacing during interaction for fewer points
+            spacing = originalSpacing * interactiveSpacingMultiplier;
+        }
+    }
+
+    private bool SplineIsInContainer(Spline spline)
+    {
+        foreach (var containerSpline in splineContainer.Splines)
+        {
+            if (containerSpline == spline) return true;
+        }
+        return false;
+    }
 
     [ContextMenu("Stamp Terrain")]
     public void StampTerrain()
     {
         InitializeTerrainData();
 
-        if (terrain == null || terrainData == null)
-        {
-            Debug.LogError("Terrain or TerrainData is not assigned!");
-            return;
-        }
+        if (terrain == null || terrainData == null) return;
+
+        // Revert to original state
+        if (originalHeights != null) terrainData.SetHeights(0, 0, originalHeights);
+        if (originalAlphaMaps != null) terrainData.SetAlphamaps(0, 0, originalAlphaMaps);
 
         Vector3[] points = GetSplinePoints();
+        if (points.Length == 0) return;
 
-        if (points == null || points.Length == 0)
+        // Batch process changes
+        float[,] tempHeights = (float[,])originalHeights.Clone();
+        float[,,] tempAlphaMaps = (float[,,])originalAlphaMaps.Clone();
+
+        foreach (var point in points)
         {
-            Debug.LogError("No points found on spline!");
-            return;
+            Vector3 terrainLocalPos = WorldToTerrainPosition(point);
+            ApplyHeightChangeToTemp(terrainLocalPos, tempHeights, terrainData.heightmapResolution);
+            ApplyTextureChangeToTemp(terrainLocalPos, tempAlphaMaps, terrainData.alphamapWidth, terrainData.alphamapHeight);
         }
 
-        ModifyTerrainHeight(points);
-        ModifyTerrainTextures(points);
-
+        terrainData.SetHeights(0, 0, tempHeights);
+        terrainData.SetAlphamaps(0, 0, tempAlphaMaps);
         terrainData.SyncHeightmap();
-        Debug.Log("Stamping completed.");
     }
 
-    [ContextMenu("Reset and Stamp Terrain")]
-    public void ResetAndStampTerrain()
+    private void ApplyHeightChangeToTemp(Vector3 terrainPos, float[,] heights, int resolution)
+    {
+        int centerX = (int)(terrainPos.x * resolution);
+        int centerY = (int)(terrainPos.z * resolution);
+        float pathRadius = (pathWidth / 2f) / terrainData.size.x * resolution;
+        float falloffRadius = heightFalloff / terrainData.size.x * resolution;
+        float totalRadius = pathRadius + falloffRadius;
+        float sqrTotalRadius = totalRadius * totalRadius;
+
+        int minX = Mathf.Clamp(centerX - (int)totalRadius, 0, resolution - 1);
+        int maxX = Mathf.Clamp(centerX + (int)totalRadius, 0, resolution - 1);
+        int minY = Mathf.Clamp(centerY - (int)totalRadius, 0, resolution - 1);
+        int maxY = Mathf.Clamp(centerY + (int)totalRadius, 0, resolution - 1);
+
+        for (int y = minY; y <= maxY; y++)
+        {
+            for (int x = minX; x <= maxX; x++)
+            {
+                float dx = x - centerX;
+                float dy = y - centerY;
+                float sqrDistance = dx * dx + dy * dy;
+
+                if (sqrDistance > sqrTotalRadius) continue;
+
+                float distance = Mathf.Sqrt(sqrDistance);
+                float falloff = Mathf.Clamp01(1 - Mathf.Max(0, distance - pathRadius) / falloffRadius);
+                float targetHeight = (terrainPos.y + baseHeight) / terrainData.size.y;
+                heights[y, x] = Mathf.Lerp(heights[y, x], targetHeight, falloff);
+            }
+        }
+    }
+    private void ApplyTextureChangeToTemp(Vector3 terrainPos, float[,,] alphaMaps, int width, int height)
+    {
+        int centerX = (int)(terrainPos.x * width);
+        int centerY = (int)(terrainPos.z * height);
+        float radius = paintFalloff / terrainData.size.x * width;
+        float sqrRadius = radius * radius;
+
+        int minX = Mathf.Clamp(centerX - (int)radius, 0, width - 1);
+        int maxX = Mathf.Clamp(centerX + (int)radius, 0, width - 1);
+        int minY = Mathf.Clamp(centerY - (int)radius, 0, height - 1);
+        int maxY = Mathf.Clamp(centerY + (int)radius, 0, height - 1);
+
+        for (int y = minY; y <= maxY; y++)
+        {
+            for (int x = minX; x <= maxX; x++)
+            {
+                float dx = x - centerX;
+                float dy = y - centerY;
+                float sqrDistance = dx * dx + dy * dy;
+
+                if (sqrDistance > sqrRadius) continue;
+
+                float distance = Mathf.Sqrt(sqrDistance);
+                float falloff = Mathf.Clamp01(1 - (distance / radius));
+
+                float totalWeight = 0f;
+                for (int layer = 0; layer < terrainData.alphamapLayers; layer++)
+                {
+                    if (layer == textureLayer)
+                    {
+                        alphaMaps[y, x, layer] = Mathf.Lerp(
+                            alphaMaps[y, x, layer], 
+                            textureOpacity, 
+                            falloff
+                        );
+                    }
+                    else
+                    {
+                        alphaMaps[y, x, layer] = Mathf.Lerp(
+                            alphaMaps[y, x, layer], 
+                            0f, 
+                            falloff
+                        );
+                    }
+                    totalWeight += alphaMaps[y, x, layer];
+                }
+
+                // Normalize weights
+                if (totalWeight > 0.0001f)
+                {
+                    for (int layer = 0; layer < terrainData.alphamapLayers; layer++)
+                        alphaMaps[y, x, layer] /= totalWeight;
+                }
+            }
+        }
+    }
+
+    [ContextMenu("Reset Terrain")]
+    public void ResetTerrain()
     {
         InitializeTerrainData();
-
-        if (terrain == null || terrainData == null)
+        
+        if (terrainData == null)
         {
-            Debug.LogError("Terrain or TerrainData is not assigned!");
+            Debug.LogError("TerrainData not initialized!");
             return;
         }
 
-        ResetTerrain();
-        StampTerrain();
-    }
-
-    private void ResetTerrain()
-    {
-        // Reset heights
+        // Reset heights to flat
         int heightmapResolution = terrainData.heightmapResolution;
         float[,] resetHeights = new float[heightmapResolution, heightmapResolution];
         terrainData.SetHeights(0, 0, resetHeights);
 
-        // Reset splatmap
+        // Reset textures to base layer
         int splatmapResolution = terrainData.alphamapResolution;
         float[,,] resetSplatmap = new float[splatmapResolution, splatmapResolution, terrainData.alphamapLayers];
         for (int y = 0; y < splatmapResolution; y++)
         {
             for (int x = 0; x < splatmapResolution; x++)
             {
-                resetSplatmap[y, x, 0] = 1f;
+                resetSplatmap[y, x, 0] = 1f; // Base layer
                 for (int layer = 1; layer < terrainData.alphamapLayers; layer++)
-                {
                     resetSplatmap[y, x, layer] = 0f;
-                }
             }
         }
         terrainData.SetAlphamaps(0, 0, resetSplatmap);
-
-        Debug.Log("Terrain reset to default state.");
+        terrainData.SyncHeightmap();
+        Debug.Log("Terrain fully reset to default state");
     }
 
+    [ContextMenu("Load Backup")]
+    public void LoadBackup()
+    {
+        InitializeTerrainData();
+        
+        if (terrainData == null)
+        {
+            Debug.LogError("TerrainData not initialized!");
+            return;
+        }
 
-    private void InitializeTerrainData()
+        if (originalHeights == null || originalAlphaMaps == null)
+        {
+            Debug.LogWarning("No backup exists! Use 'Backup Terrain' first.");
+            return;
+        }
+
+        // Restore from backup
+        terrainData.SetHeights(0, 0, originalHeights);
+        terrainData.SetAlphamaps(0, 0, originalAlphaMaps);
+        terrainData.SyncHeightmap();
+        Debug.Log("Terrain restored from backup");
+    }
+
+    [ContextMenu("Backup Terrain")]
+    public void BackupTerrain()
+    {
+        InitializeTerrainData();
+        
+        if (terrainData != null)
+        {
+            originalHeights = terrainData.GetHeights(0, 0, 
+                terrainData.heightmapResolution, 
+                terrainData.heightmapResolution);
+
+            originalAlphaMaps = terrainData.GetAlphamaps(0, 0, 
+                terrainData.alphamapWidth, 
+                terrainData.alphamapHeight);
+                
+            Debug.Log("Terrain backup created");
+        }
+    }
+
+     private void InitializeTerrainData()
     {
         terrainData = terrain?.terrainData;
     }
